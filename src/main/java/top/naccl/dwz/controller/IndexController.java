@@ -39,14 +39,14 @@ public class IndexController {
 	@PostMapping("/generate")
 	@ResponseBody
 	public R generateShortURL(@RequestParam String longURL) {
-		if (UrlUtils.checkURL(longURL)) {
-			if (!longURL.startsWith("http")) {
-				longURL = "http://" + longURL;
-			}
-			String shortURL = urlService.saveUrlMap(HashUtils.hashToBase62(longURL), longURL, longURL);
-			return R.ok("请求成功", host + shortURL);
+		if (!UrlUtils.checkURL(longURL)) {
+			return R.create(400, "URL有误");
 		}
-		return R.create(400, "URL有误");
+		if (!longURL.startsWith("http")) {
+			longURL = "http://" + longURL;
+		}
+		String shortURL = urlService.saveUrlMap(HashUtils.hashToBase62(longURL), longURL, longURL);
+		return R.ok("请求成功", host + shortURL);
 	}
 
 	@GetMapping("/{shortURL}")
